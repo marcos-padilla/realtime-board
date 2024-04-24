@@ -5,6 +5,7 @@ import { api } from '@/convex/_generated/api'
 import { useApiMutation } from '@/hooks/use-api-mutations'
 import { useOrganization } from '@clerk/nextjs'
 import Image from 'next/image'
+import { toast } from 'sonner'
 
 export default function EmptyBoards() {
 	const { mutate, pending } = useApiMutation(api.board.create)
@@ -15,6 +16,11 @@ export default function EmptyBoards() {
 			title: 'Untitled',
 			orgId: organization.id,
 		})
+			.then((id) => {
+				toast.success('Board created successfully')
+				// TODO: Redirect to board/[id]
+			})
+			.catch(() => toast.error('Failed to create board'))
 	}
 	return (
 		<div className='h-full flex flex-col items-center justify-center'>
@@ -32,7 +38,7 @@ export default function EmptyBoards() {
 			</p>
 			<div className='mt-6'>
 				<Button disabled={pending} size={'lg'} onClick={onClick}>
-					Creat board
+					Create board
 				</Button>
 			</div>
 		</div>
