@@ -8,7 +8,7 @@ export default function Participants() {
 	)
 }
 
-Participants.Skeleton = function ParticipantsSkeleton() {
+export const ParticipantsSkeleton = () => {
 	return (
 		<Skeleton className='absolute h-12 w-[150px] top-2 right-2 bg-white rounded-md p-3 shadow-md' />
 	)
