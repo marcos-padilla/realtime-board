@@ -10,6 +10,9 @@ import BoardCardFooter from './board-card-footer'
 import { Skeleton } from '@/components/ui/skeleton'
 import Actions from '@/components/actions'
 import { MoreHorizontal } from 'lucide-react'
+import { useApiMutation } from '@/hooks/use-api-mutations'
+import { api } from '@/convex/_generated/api'
+import { toast } from 'sonner'
 
 interface BoardCardProps {
 	_id: Id<'boards'>
@@ -37,6 +40,25 @@ export default function BoardCard({
 	const createdAtLabel = formatDistanceToNow(_creationTime, {
 		addSuffix: true,
 	})
+
+	const { mutate: onFavorite, pending: pendingFavorite } = useApiMutation(
+		api.board.favorite
+	)
+	const { mutate: onUnfavorite, pending: pendingUnfavorite } =
+		useApiMutation(api.board.unfavorite)
+
+	const toggleFavorite = () => {
+		if (isFavorite) {
+			onUnfavorite({ id: _id }).catch(() =>
+				toast.error('Failed to unfavorite')
+			)
+		} else {
+			onFavorite({ id: _id, orgId }).catch(() =>
+				toast.error('Failed to favorite')
+			)
+		}
+	}
+
 	return (
 		<Link href={`/board/${_id}`}>
 			<div className='group aspect-[100/127] border rounded-lg flex flex-col justify-between overflow-hidden'>
@@ -59,8 +81,8 @@ export default function BoardCard({
 					isFavorite={isFavorite}
 					authorLabel={authorLabel}
 					createdAtLabel={createdAtLabel}
-					onClick={() => {}}
-					disabled={false}
+					onClick={toggleFavorite}
+					disabled={pendingFavorite || pendingUnfavorite}
 				/>
 			</div>
 		</Link>
