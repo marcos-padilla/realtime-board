@@ -1,5 +1,11 @@
 import Canvas from './_components/canvas'
 
-export default function BoardIdPage() {
-	return <Canvas />
+interface BoardIdPageProps {
+	params: {
+		boardId: string
+	}
+}
+
+export default function BoardIdPage({ params }: BoardIdPageProps) {
+	return <Canvas boardId={params.boardId} />
 }
