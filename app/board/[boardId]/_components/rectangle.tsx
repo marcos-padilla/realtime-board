@@ -1,3 +1,4 @@
+import { colorToHex } from '@/lib/utils'
 import { RectangleLayer } from '@/types'
 
 interface RectangleProps {
@@ -26,8 +27,8 @@ export default function Rectangle({
 			width={width}
 			height={height}
 			strokeWidth={1}
-			fill='#000'
-			stroke='transparent'
+			fill={fill ? colorToHex(fill) : '#000'}
+			stroke={selectionColor || 'transparent'}
 		/>
 	)
 }
