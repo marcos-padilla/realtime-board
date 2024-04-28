@@ -23,6 +23,7 @@ export const LayerPreview = memo(
 						id={id}
 						layer={layer}
 						onPointerDown={onLayerPointerDown}
+						selectionColor={selectionColor}
 					/>
 				)
 			default:

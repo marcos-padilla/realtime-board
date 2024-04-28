@@ -9,7 +9,7 @@ import {
 	LayerType,
 	Point,
 } from '@/types'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Info from './info'
 import Participants from './participants'
 import Toolbar from './toolbar'
@@ -41,9 +41,9 @@ export default function Canvas({ boardId }: CanvasProps) {
 
 	const [camera, setCamera] = useState<Camera>({ x: 0, y: 0 })
 	const [lastUsedColor, setLastUsedColor] = useState<Color>({
-		r: 0,
-		g: 0,
-		b: 0,
+		r: 255,
+		g: 255,
+		b: 255,
 	})
 	const history = useHistory()
 	const canUndo = useCanUndo()
@@ -117,6 +117,32 @@ export default function Canvas({ boardId }: CanvasProps) {
 		[camera, canvasState, history, insertLayer]
 	)
 
+	const onLayerPointerDown = useMutation(
+		({ self, setMyPresence }, e: React.PointerEvent, layerId: string) => {
+			if (
+				canvasState.mode === CanvasMode.Pencil ||
+				canvasState.mode === CanvasMode.Inserting
+			)
+				return
+			history.pause()
+			e.stopPropagation()
+			const point = pointerEventToCanvasPoint(e, camera)
+			console.log('Hello World')
+
+			if (!self.presence.selection.includes(layerId)) {
+				setMyPresence(
+					{ selection: [layerId] },
+					{ addToHistory: true }
+				)
+				setCanvasState({
+					mode: CanvasMode.Translating,
+					current: point,
+				})
+			}
+		},
+		[setCanvasState, camera, history, canvasState.mode]
+	)
+
 	const selections = useOthersMapped((other) => other.presence.selection)
 	const layerIdsToColorSelection = useMemo(() => {
 		const layerIdsToColorSelection: Record<string, string> = {}
@@ -129,6 +155,7 @@ export default function Canvas({ boardId }: CanvasProps) {
 		}
 		return layerIdsToColorSelection
 	}, [selections])
+
 	return (
 		<main className='size-full relative bg-neutral-100 touch-none'>
 			<Info boardId={boardId} />
@@ -157,7 +184,7 @@ export default function Canvas({ boardId }: CanvasProps) {
 						<LayerPreview
 							key={layerId}
 							id={layerId}
-							onLayerPointerDown={() => {}}
+							onLayerPointerDown={onLayerPointerDown}
 							selectionColor={
 								layerIdsToColorSelection[layerId]
 							}
