@@ -84,8 +84,8 @@ export default function Canvas({ boardId }: CanvasProps) {
 
 	const onWheel = useCallback((e: React.WheelEvent) => {
 		setCamera((prev) => ({
-			x: camera.x - e.deltaX,
-			y: camera.y - e.deltaY,
+			x: prev.x - e.deltaX,
+			y: prev.y - e.deltaY,
 		}))
 	}, [])
 
