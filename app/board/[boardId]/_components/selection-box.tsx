@@ -52,7 +52,10 @@ export const SelectionBox = memo(
 							}}
 							onPointerDown={(e) => {
 								e.stopPropagation()
-								//TODO: Add resize handler
+								onResizeHandlerPointerDown(
+									Side.Top + Side.Left,
+									bounds
+								)
 							}}
 						/>
 						<rect
@@ -67,7 +70,10 @@ export const SelectionBox = memo(
 							}}
 							onPointerDown={(e) => {
 								e.stopPropagation()
-								//TODO: Add resize handler
+								onResizeHandlerPointerDown(
+									Side.Top,
+									bounds
+								)
 							}}
 						/>
 						<rect
@@ -82,6 +88,10 @@ export const SelectionBox = memo(
 							}}
 							onPointerDown={(e) => {
 								e.stopPropagation()
+								onResizeHandlerPointerDown(
+									Side.Top + Side.Right,
+									bounds
+								)
 							}}
 						/>
 						<rect
@@ -96,6 +106,10 @@ export const SelectionBox = memo(
 							}}
 							onPointerDown={(e) => {
 								e.stopPropagation()
+								onResizeHandlerPointerDown(
+									Side.Right,
+									bounds
+								)
 							}}
 						/>
 						<rect
@@ -110,6 +124,10 @@ export const SelectionBox = memo(
 							}}
 							onPointerDown={(e) => {
 								e.stopPropagation()
+								onResizeHandlerPointerDown(
+									Side.Bottom + Side.Right,
+									bounds
+								)
 							}}
 						/>
 						<rect
@@ -124,6 +142,10 @@ export const SelectionBox = memo(
 							}}
 							onPointerDown={(e) => {
 								e.stopPropagation()
+								onResizeHandlerPointerDown(
+									Side.Bottom,
+									bounds
+								)
 							}}
 						/>
 						<rect
@@ -138,6 +160,10 @@ export const SelectionBox = memo(
 							}}
 							onPointerDown={(e) => {
 								e.stopPropagation()
+								onResizeHandlerPointerDown(
+									Side.Bottom + Side.Left,
+									bounds
+								)
 							}}
 						/>
 						<rect
@@ -152,6 +178,10 @@ export const SelectionBox = memo(
 							}}
 							onPointerDown={(e) => {
 								e.stopPropagation()
+								onResizeHandlerPointerDown(
+									Side.Left,
+									bounds
+								)
 							}}
 						/>
 					</>
