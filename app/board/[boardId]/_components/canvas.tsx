@@ -26,6 +26,7 @@ import { connectionIdToColor, pointerEventToCanvasPoint } from '@/lib/utils'
 import { nanoid } from 'nanoid'
 import { LiveObject } from '@liveblocks/client'
 import { LayerPreview } from './layer-preview'
+import { SelectionBox } from './selection-box'
 interface CanvasProps {
 	boardId: string
 }
@@ -127,7 +128,6 @@ export default function Canvas({ boardId }: CanvasProps) {
 			history.pause()
 			e.stopPropagation()
 			const point = pointerEventToCanvasPoint(e, camera)
-			console.log('Hello World')
 
 			if (!self.presence.selection.includes(layerId)) {
 				setMyPresence(
@@ -190,6 +190,7 @@ export default function Canvas({ boardId }: CanvasProps) {
 							}
 						/>
 					))}
+					<SelectionBox onResizeHandlerPointerDown={() => {}} />
 					<CursorsPresence />
 				</g>
 			</svg>
