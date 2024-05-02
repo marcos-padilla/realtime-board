@@ -1,9 +1,10 @@
 'use client'
 
 import { useSelectionBounds } from '@/hooks/use-selection-bounds'
-import { useSelf } from '@/liveblocks.config'
+import { useMutation, useSelf } from '@/liveblocks.config'
 import { Camera, Color } from '@/types'
 import { memo } from 'react'
+import ColorPicker from './color-picker'
 
 interface SelectionToolsProps {
 	camera: Camera
@@ -14,6 +15,17 @@ export const SelectionTools = memo(
 	({ camera, setLastUsedColor }: SelectionToolsProps) => {
 		const selection = useSelf((self) => self.presence.selection)
 		const selectionBounds = useSelectionBounds()
+		const setFill = useMutation(
+			({ storage }, fill: Color) => {
+				const liveLyaers = storage.get('layers')
+				setLastUsedColor(fill)
+				selection.forEach((id) => {
+					liveLyaers.get(id)?.set('fill', fill)
+				})
+			},
+			[selection, setLastUsedColor]
+		)
+
 		if (!selectionBounds) return null
 
 		const x = selectionBounds.width / 2 + selectionBounds.x + camera.x
@@ -28,7 +40,7 @@ export const SelectionTools = memo(
                )`,
 				}}
 			>
-				Selection Tool
+				<ColorPicker onChange={setFill} />
 			</div>
 		)
 	}
