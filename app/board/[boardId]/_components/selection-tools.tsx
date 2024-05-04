@@ -39,6 +39,28 @@ export const SelectionTools = memo(
 			[selection]
 		)
 
+		const moveToFront = useMutation(
+			({ storage }) => {
+				const liveLayerIds = storage.get('layerIds')
+				const indices: number[] = []
+				const arr = liveLayerIds.toArray()
+
+				for (let i = 0; i < arr.length; i++) {
+					if (selection.includes(arr[i])) {
+						indices.push(i)
+					}
+				}
+
+				for (let i = indices.length - 1; i >= 0; i--) {
+					liveLayerIds.move(
+						indices[i],
+						arr.length - 1 - (indices.length - 1 - i)
+					)
+				}
+			},
+			[selection]
+		)
+
 		const setFill = useMutation(
 			({ storage }, fill: Color) => {
 				const liveLyaers = storage.get('layers')
@@ -70,7 +92,11 @@ export const SelectionTools = memo(
 
 				<div className='flex flex-col gap-y-0 5'>
 					<Hint label='Bring to front'>
-						<Button variant={'board'} size={'icon'}>
+						<Button
+							variant={'board'}
+							size={'icon'}
+							onClick={moveToFront}
+						>
 							<BringToFront />
 						</Button>
 					</Hint>
