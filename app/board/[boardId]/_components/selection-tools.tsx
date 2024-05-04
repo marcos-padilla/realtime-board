@@ -54,7 +54,7 @@ export const SelectionTools = memo(
 				for (let i = indices.length - 1; i >= 0; i--) {
 					liveLayerIds.move(
 						indices[i],
-						arr.length - 1 - (indices.length - 1 - i)
+						arr.length - indices.length + i
 					)
 				}
 			},
