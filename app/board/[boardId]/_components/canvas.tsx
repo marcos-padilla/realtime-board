@@ -26,6 +26,7 @@ import {
 import { CursorsPresence } from './cursors-presence'
 import {
 	connectionIdToColor,
+	findIntersectingLayersWithRect,
 	pointerEventToCanvasPoint,
 	resizeBounds,
 } from '@/lib/utils'
@@ -39,6 +40,8 @@ interface CanvasProps {
 }
 
 const MAX_LAYERS = 100
+
+const SELECTION_NET_THRESHOLD = 5
 
 export default function Canvas({ boardId }: CanvasProps) {
 	const layerIds = useStorage((storage) => storage.layerIds)
@@ -96,6 +99,43 @@ export default function Canvas({ boardId }: CanvasProps) {
 			setMyPresence({ selection: [] }, { addToHistory: true })
 		}
 	}, [])
+
+	const startMultiSelection = useCallback(
+		(current: Point, origin: Point) => {
+			if (
+				Math.abs(current.x - origin.x) +
+					Math.abs(current.y - origin.y) >
+				SELECTION_NET_THRESHOLD
+			) {
+				setCanvasState({
+					mode: CanvasMode.SelectionNet,
+					origin,
+					current,
+				})
+			}
+		},
+		[]
+	)
+
+	const updateSelectionNet = useMutation(
+		({ storage, setMyPresence }, current: Point, origin: Point) => {
+			const layers = storage.get('layers').toImmutable()
+			setCanvasState({
+				mode: CanvasMode.SelectionNet,
+				origin,
+				current,
+			})
+
+			const ids = findIntersectingLayersWithRect(
+				layerIds,
+				layers,
+				origin,
+				current
+			)
+			setMyPresence({ selection: ids })
+		},
+		[layerIds]
+	)
 
 	const resizeSelectedLayer = useMutation(
 		({ storage, self }, point: Point) => {
@@ -167,7 +207,11 @@ export default function Canvas({ boardId }: CanvasProps) {
 			e.preventDefault()
 			const current = pointerEventToCanvasPoint(e, camera)
 
-			if (canvasState.mode === CanvasMode.Translating) {
+			if (canvasState.mode === CanvasMode.Pressing) {
+				startMultiSelection(current, canvasState.origin)
+			} else if (canvasState.mode === CanvasMode.SelectionNet) {
+				updateSelectionNet(current, canvasState.origin)
+			} else if (canvasState.mode === CanvasMode.Translating) {
 				translateSelectedLayers(current)
 			} else if (canvasState.mode === CanvasMode.Resizing) {
 				resizeSelectedLayer(current)
