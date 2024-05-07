@@ -1,20 +1,15 @@
 'use client'
 
+import { useDeleteLayers } from '@/hooks/use-delete-layers'
+import { useDisableScrollBounce } from '@/hooks/use-disable-scroll-bounce'
 import {
-	Camera,
-	CanvasMode,
-	CanvasState,
-	Color,
-	Layer,
-	LayerType,
-	Point,
-	Side,
-	XYWH,
-} from '@/types'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import Info from './info'
-import Participants from './participants'
-import Toolbar from './toolbar'
+	colorToHex,
+	connectionIdToColor,
+	findIntersectingLayersWithRect,
+	penPointsToPathLayer,
+	pointerEventToCanvasPoint,
+	resizeBounds,
+} from '@/lib/utils'
 import {
 	useCanRedo,
 	useCanUndo,
@@ -24,22 +19,27 @@ import {
 	useSelf,
 	useStorage,
 } from '@/liveblocks.config'
-import { CursorsPresence } from './cursors-presence'
 import {
-	colorToHex,
-	connectionIdToColor,
-	findIntersectingLayersWithRect,
-	penPointsToPathLayer,
-	pointerEventToCanvasPoint,
-	resizeBounds,
-} from '@/lib/utils'
-import { nanoid } from 'nanoid'
+	Camera,
+	CanvasMode,
+	CanvasState,
+	Color,
+	LayerType,
+	Point,
+	Side,
+	XYWH,
+} from '@/types'
 import { LiveObject } from '@liveblocks/client'
+import { nanoid } from 'nanoid'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { CursorsPresence } from './cursors-presence'
+import Info from './info'
 import { LayerPreview } from './layer-preview'
+import Participants from './participants'
+import Path from './path'
 import { SelectionBox } from './selection-box'
 import { SelectionTools } from './selection-tools'
-import Path from './path'
-import { useDisableScrollBounce } from '@/hooks/use-disable-scroll-bounce'
+import Toolbar from './toolbar'
 interface CanvasProps {
 	boardId: string
 }
@@ -62,6 +62,7 @@ export default function Canvas({ boardId }: CanvasProps) {
 		g: 255,
 		b: 255,
 	})
+
 	useDisableScrollBounce()
 	const history = useHistory()
 	const canUndo = useCanUndo()
@@ -391,6 +392,31 @@ export default function Canvas({ boardId }: CanvasProps) {
 		}
 		return layerIdsToColorSelection
 	}, [selections])
+
+	const deleteLayers = useDeleteLayers()
+	useEffect(() => {
+		function onKeyDown(e: KeyboardEvent) {
+			console.log(e.key)
+
+			switch (e.key) {
+				case 'Delete':
+					deleteLayers()
+					break
+				case 'z':
+					if (e.ctrlKey || e.metaKey) {
+						if (e.shiftKey) {
+							history.redo()
+						} else {
+							history.undo()
+						}
+					}
+					break
+			}
+		}
+
+		document.addEventListener('keydown', onKeyDown)
+		return () => document.removeEventListener('keydown', onKeyDown)
+	}, [deleteLayers, history])
 
 	return (
 		<main className='size-full relative bg-neutral-100 touch-none'>
