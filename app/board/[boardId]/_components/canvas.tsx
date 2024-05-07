@@ -39,6 +39,7 @@ import { LayerPreview } from './layer-preview'
 import { SelectionBox } from './selection-box'
 import { SelectionTools } from './selection-tools'
 import Path from './path'
+import { useDisableScrollBounce } from '@/hooks/use-disable-scroll-bounce'
 interface CanvasProps {
 	boardId: string
 }
@@ -61,6 +62,7 @@ export default function Canvas({ boardId }: CanvasProps) {
 		g: 255,
 		b: 255,
 	})
+	useDisableScrollBounce()
 	const history = useHistory()
 	const canUndo = useCanUndo()
 	const canRedo = useCanRedo()
