@@ -41,7 +41,7 @@ const client = createClient({
 		//
 		// return roomsData.map((roomData) => ({
 		//   name: roomData.name,
-		//   url: roomData.url,
+		//   url: roomData.url ,
 		// }));
 
 		return []
@@ -54,6 +54,8 @@ const client = createClient({
 type Presence = {
 	cursor: { x: number; y: number } | null
 	selection: string[]
+	pencilDraft: [x: number, y: number, pressure: number][] | null
+	pencilColor: Color | null
 }
 
 // Optionally, Storage represents the shared document that persists in the

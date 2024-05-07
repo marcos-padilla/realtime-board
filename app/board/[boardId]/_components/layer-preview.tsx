@@ -7,6 +7,8 @@ import Rectangle from './rectangle'
 import Ellipse from './ellipse'
 import Text from './text'
 import Note from './note'
+import Path from './path'
+import { colorToHex } from '@/lib/utils'
 
 interface LayerPreviewProps {
 	id: string
@@ -54,6 +56,20 @@ export const LayerPreview = memo(
 						layer={layer}
 						onPointerDown={onLayerPointerDown}
 						selectionColor={selectionColor}
+					/>
+				)
+			case LayerType.Path:
+				return (
+					<Path
+						key={id}
+						onPointerDown={(e) => onLayerPointerDown(e, id)}
+						stroke={selectionColor}
+						points={layer.points}
+						x={layer.x}
+						y={layer.y}
+						fill={
+							layer.fill ? colorToHex(layer.fill) : '#000'
+						}
 					/>
 				)
 			default:
